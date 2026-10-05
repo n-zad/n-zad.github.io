@@ -6,11 +6,27 @@ A personal portfolio website, currently in development. It is meant to show who 
 
 The site is built with [Astro](https://astro.build/) and TypeScript.
 
+## Development
+
+Install dependencies, then start the dev server:
+
+```sh
+npm install
+npm run dev
+```
+
+The dev server runs at `http://localhost:4321`.
+
+| Command | Action |
+| --- | --- |
+| `npm run dev` | Start the local dev server |
+| `npm run build` | Build the production site to `dist/` |
+| `npm run preview` | Preview the production build |
+| `npm run check` | Type-check the project |
+
 ## Status
 
 Early. The pages, project writeups, and visual design are still being built. This repository is the working copy of that site.
-
-There is no Astro app in the repository yet, so there is nothing to install or run.
 
 ## Agent Skills
 
