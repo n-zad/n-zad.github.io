@@ -1,0 +1,80 @@
+---
+import { projectDialogId, type Project, type ProjectDetails } from "../data/projects";
+import Icon from "./Icon.astro";
+import ProjectMeta from "./ProjectMeta.astro";
+import TextLinks from "./TextLinks.astro";
+
+interface Props {
+  project: Project;
+  details: ProjectDetails;
+}
+
+const { project, details } = Astro.props;
+const dialogId = projectDialogId(project);
+const titleId = `${dialogId}-title`;
+---
+
+<dialog class="project-dialog" id={dialogId} aria-labelledby={titleId}>
+  <article class="project-dialog-body">
+    <header>
+      <form method="dialog">
+        <button class="dialog-close" aria-label="Close details">
+          <Icon name="close" />
+        </button>
+      </form>
+      <h2 id={titleId}>{project.title}</h2>
+      <ProjectMeta project={project} />
+    </header>
+    <p class="dialog-summary">{project.summary}</p>
+    {project.tags.length > 0 && <p class="tags">{project.tags.join(" · ")}</p>}
+    <TextLinks links={project.links} />
+    {
+      details.images?.map((image) => (
+        <figure>
+          <img src={image.src} alt={image.alt} loading="lazy" />
+          {image.caption && <figcaption class="meta">{image.caption}</figcaption>}
+        </figure>
+      ))
+    }
+    {
+      details.sections.map((section) => (
+        <section>
+          <h3>{section.heading}</h3>
+          {section.paragraphs.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </section>
+      ))
+    }
+    {
+      details.reflection && (
+        <section>
+          <h3>Reflection</h3>
+          {details.reflection.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </section>
+      )
+    }
+  </article>
+</dialog>
+
+<script>
+  for (const opener of document.querySelectorAll<HTMLButtonElement>("[data-opens-dialog]")) {
+    const dialog = document.getElementById(opener.dataset.opensDialog ?? "");
+    if (!(dialog instanceof HTMLDialogElement)) {
+      console.error(`No dialog found for ${opener.dataset.opensDialog}`);
+      continue;
+    }
+    opener.addEventListener("click", () => dialog.showModal());
+  }
+
+  for (const dialog of document.querySelectorAll<HTMLDialogElement>(".project-dialog")) {
+    dialog.addEventListener("click", (event) => {
+      const clickedBackdrop = event.target === dialog;
+      if (clickedBackdrop) {
+        dialog.close();
+      }
+    });
+  }
+</script>

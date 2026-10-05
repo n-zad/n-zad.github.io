@@ -1,6 +1,5 @@
 ---
 import "../styles/base.css";
-import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { profile } from "../data/site";
 
@@ -36,6 +35,5 @@ const documentTitle = title === profile.name ? profile.name : `${title}, ${profi
     <main id="main">
       <slot />
     </main>
-    {Astro.url.pathname !== "/" && <SiteFooter />}
   </body>
 </html>

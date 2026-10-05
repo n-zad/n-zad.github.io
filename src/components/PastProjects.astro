@@ -1,0 +1,163 @@
+---
+import { projectSearchText, type Project } from "../data/projects";
+import ProjectSummary from "./ProjectSummary.astro";
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div class="project-browser" data-project-browser>
+  <div class="project-search" data-project-controls hidden>
+    <label for="past-project-search">Search past projects</label>
+    <input
+      id="past-project-search"
+      type="search"
+      placeholder="Try “course”, “team”, or “PyTorch”"
+      autocomplete="off"
+      data-project-search
+    />
+    <p class="meta" role="status" data-project-status></p>
+  </div>
+  <ul class="more-list">
+    {
+      projects.map((project) => (
+        <li data-search-text={projectSearchText(project)}>
+          <ProjectSummary project={project} />
+        </li>
+      ))
+    }
+  </ul>
+  <nav class="pagination" aria-label="Past projects pages" data-project-pagination hidden></nav>
+</div>
+
+<script>
+  const PAGE_SIZE = 5;
+
+  type BrowserParts = {
+    root: HTMLElement;
+    controls: HTMLElement;
+    search: HTMLInputElement;
+    status: HTMLElement;
+    pagination: HTMLElement;
+    items: HTMLLIElement[];
+  };
+
+  function findParts(root: HTMLElement): BrowserParts {
+    const controls = root.querySelector<HTMLElement>("[data-project-controls]");
+    const search = root.querySelector<HTMLInputElement>("[data-project-search]");
+    const status = root.querySelector<HTMLElement>("[data-project-status]");
+    const pagination = root.querySelector<HTMLElement>("[data-project-pagination]");
+    if (!controls || !search || !status || !pagination) {
+      throw new Error("Project browser is missing its search or pagination elements");
+    }
+    const items = [...root.querySelectorAll<HTMLLIElement>("li[data-search-text]")];
+    return { root, controls, search, status, pagination, items };
+  }
+
+  function matchesQuery(item: HTMLLIElement, terms: string[]): boolean {
+    const searchText = item.dataset.searchText ?? "";
+    return terms.every((term) => searchText.includes(term));
+  }
+
+  function describeResults(query: string, firstShown: number, lastShown: number, total: number): string {
+    if (total === 0) {
+      return `No past projects match “${query}”.`;
+    }
+    const range = `Showing ${firstShown}–${lastShown} of ${total} ${total === 1 ? "project" : "projects"}`;
+    return query ? `${range} matching “${query}”` : range;
+  }
+
+  function pageButton(label: string, page: number, ariaLabel: string): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    button.dataset.page = String(page);
+    button.setAttribute("aria-label", ariaLabel);
+    return button;
+  }
+
+  function setUpProjectBrowser(parts: BrowserParts) {
+    let currentPage = 1;
+    let renderedPageCount = 0;
+
+    function rebuildPagination(pageCount: number) {
+      const numberButtons = Array.from({ length: pageCount }, (_, index) =>
+        pageButton(String(index + 1), index + 1, `Page ${index + 1}`),
+      );
+      parts.pagination.replaceChildren(
+        pageButton("Previous", 0, "Previous page"),
+        ...numberButtons,
+        pageButton("Next", 0, "Next page"),
+      );
+      renderedPageCount = pageCount;
+    }
+
+    function updatePagination(pageCount: number) {
+      parts.pagination.hidden = pageCount <= 1;
+      if (pageCount !== renderedPageCount) {
+        rebuildPagination(pageCount);
+      }
+
+      const buttons = [...parts.pagination.querySelectorAll<HTMLButtonElement>("button")];
+      const previous = buttons[0];
+      const next = buttons[buttons.length - 1];
+      previous.dataset.page = String(currentPage - 1);
+      previous.disabled = currentPage === 1;
+      next.dataset.page = String(currentPage + 1);
+      next.disabled = currentPage === pageCount;
+      for (const button of buttons.slice(1, -1)) {
+        if (Number(button.dataset.page) === currentPage) {
+          button.setAttribute("aria-current", "page");
+        } else {
+          button.removeAttribute("aria-current");
+        }
+      }
+    }
+
+    function render() {
+      const query = parts.search.value.trim();
+      const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+      const matches = parts.items.filter((item) => matchesQuery(item, terms));
+      const pageCount = Math.max(1, Math.ceil(matches.length / PAGE_SIZE));
+      currentPage = Math.min(currentPage, pageCount);
+
+      const firstIndex = (currentPage - 1) * PAGE_SIZE;
+      const visibleItems = new Set(matches.slice(firstIndex, firstIndex + PAGE_SIZE));
+      for (const item of parts.items) {
+        item.hidden = !visibleItems.has(item);
+      }
+
+      const lastShown = Math.min(firstIndex + PAGE_SIZE, matches.length);
+      parts.status.textContent = describeResults(query, firstIndex + 1, lastShown, matches.length);
+      updatePagination(pageCount);
+    }
+
+    parts.search.addEventListener("input", () => {
+      currentPage = 1;
+      render();
+    });
+
+    parts.pagination.addEventListener("click", (event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>("button[data-page]");
+      if (!button || button.disabled) {
+        return;
+      }
+      currentPage = Number(button.dataset.page);
+      render();
+      const listTopIsOffscreen = parts.root.getBoundingClientRect().top < 0;
+      if (listTopIsOffscreen) {
+        parts.root.scrollIntoView({ block: "start" });
+      }
+    });
+
+    parts.controls.hidden = false;
+    render();
+  }
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-project-browser]")) {
+    setUpProjectBrowser(findParts(root));
+  }
+</script>

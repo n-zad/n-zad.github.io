@@ -1,22 +1,15 @@
 ---
 import ContactIcons from "../components/ContactIcons.astro";
+import PastProjects from "../components/PastProjects.astro";
+import ProjectDialog from "../components/ProjectDialog.astro";
+import ProjectSummary from "../components/ProjectSummary.astro";
 import TextLinks from "../components/TextLinks.astro";
+import { currentProjects, pastProjects, projects } from "../data/projects";
 import Base from "../layouts/Base.astro";
-import {
-  additionalProjects,
-  everythingPlaylist,
-  featuredProjects,
-  games,
-  internships,
-  linkAttrs,
-  playlists,
-  profile,
-  projectLinks,
-  projectPath,
-} from "../data/site";
+import { everythingPlaylist, games, internships, linkAttrs, playlists, profile } from "../data/site";
 
-const featured = featuredProjects();
-const additional = additionalProjects();
+const current = currentProjects();
+const past = pastProjects();
 const [givenName, familyName] = profile.name.split(" ");
 const videoGames = new Intl.ListFormat("en", { type: "conjunction" }).format(games.video);
 
@@ -54,28 +47,18 @@ const contactLinks = [
     </div>
   </header>
 
-  <section class="band" id="work">
+  <section class="band" id="projects" aria-labelledby="current-projects-heading">
     <div class="section-heading">
       <p class="index">01</p>
-      <h2>Selected work</h2>
+      <h2 id="current-projects-heading">Current projects</h2>
     </div>
     <ol class="featured-list">
       {
-        featured.map((project, position) => (
+        current.map((project, position) => (
           <li>
             <p class="project-index">{String(position + 1).padStart(2, "0")}</p>
-            <div class="project-copy">
-              <h3>
-                {project.writeup ? (
-                  <a href={projectPath(project)}>{project.title}</a>
-                ) : (
-                  project.title
-                )}
-              </h3>
-              <p class="meta">{project.context}</p>
-              <p>{project.summary}</p>
-              <p class="tags">{project.tags.join(" · ")}</p>
-              <TextLinks links={projectLinks(project)} />
+            <div>
+              <ProjectSummary project={project} />
             </div>
           </li>
         ))
@@ -83,26 +66,15 @@ const contactLinks = [
     </ol>
   </section>
 
-  <section class="band band--mist" id="more-work" aria-labelledby="more-work-heading">
+  <section class="band band--mist" id="past-projects" aria-labelledby="past-projects-heading">
     <div class="section-heading">
       <p class="index">02</p>
-      <h2 id="more-work-heading">More work</h2>
+      <h2 id="past-projects-heading">Past projects</h2>
     </div>
-    <ul class="more-list">
-      {
-        additional.map((project) => (
-          <li>
-            <div>
-              <h3>{project.title}</h3>
-              <p class="meta">{project.context}</p>
-              <p>{project.summary}</p>
-            </div>
-            <TextLinks links={project.links} />
-          </li>
-        ))
-      }
-    </ul>
+    <PastProjects projects={past} />
   </section>
+
+  {projects.map((project) => project.details && <ProjectDialog project={project} details={project.details} />)}
 
   <section class="band" id="about">
     <div class="section-heading">

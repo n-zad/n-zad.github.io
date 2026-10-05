@@ -9,6 +9,7 @@ const { links } = Astro.props;
 ---
 
 <ul class="text-links">
+  <slot />
   {
     links.map((link) => (
       <li>

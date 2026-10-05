@@ -1,0 +1,22 @@
+---
+import { projectLabels, projectMetaParts, type Project } from "../data/projects";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const metaParts = projectMetaParts(project);
+const labels = projectLabels(project);
+---
+
+{metaParts.length > 0 && <p class="meta">{metaParts.join(" · ")}</p>}
+{
+  labels.length > 0 && (
+    <ul class="project-labels" aria-label="Project type">
+      {labels.map((label) => (
+        <li>{label}</li>
+      ))}
+    </ul>
+  )
+}

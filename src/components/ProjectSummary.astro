@@ -1,0 +1,32 @@
+---
+import { projectDialogId, type Project } from "../data/projects";
+import ProjectMeta from "./ProjectMeta.astro";
+import TextLinks from "./TextLinks.astro";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const hasActions = project.links.length > 0 || project.details !== undefined;
+---
+
+<div class="project-copy">
+  <h3>{project.title}</h3>
+  <ProjectMeta project={project} />
+  <p>{project.summary}</p>
+  {project.tags.length > 0 && <p class="tags">{project.tags.join(" · ")}</p>}
+</div>
+{
+  hasActions && (
+    <TextLinks links={project.links}>
+      {project.details && (
+        <li>
+          <button type="button" class="link-button" aria-haspopup="dialog" data-opens-dialog={projectDialogId(project)}>
+            Details
+          </button>
+        </li>
+      )}
+    </TextLinks>
+  )
+}
