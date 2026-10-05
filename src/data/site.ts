@@ -31,7 +31,7 @@ export const profile = {
   location: "San Jose, California",
   email: "nickzadbayati@gmail.com",
   description:
-    "Nickzad Bayati is an M.S. Artificial Intelligence student at San José State University. This site collects selected projects, other work, and music playlists.",
+    "Nickzad Bayati is an M.S. Artificial Intelligence student at San José State University and a Cal Poly San Luis Obispo computer science graduate. Before grad school, he interned at Intel and Solidigm.",
   links: {
     linkedin: "https://www.linkedin.com/in/nickzadbayati/",
     github: "https://github.com/n-zad",

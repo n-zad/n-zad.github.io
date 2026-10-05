@@ -277,6 +277,14 @@ h1 {
   margin: 0.85rem 0 0;
 }
 
+.support p:first-child {
+  margin-top: 0;
+}
+
+.support p + p {
+  margin-top: 0.7rem;
+}
+
 .band {
   padding-block: clamp(2.4rem, 5vw, 4rem);
   padding-inline: var(--content-inline);

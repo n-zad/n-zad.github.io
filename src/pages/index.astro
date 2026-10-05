@@ -20,7 +20,6 @@ const contactLinks = [
   { label: "Resume", href: profile.links.resume },
   { label: "LinkedIn", href: profile.links.linkedin },
   { label: "GitHub", href: profile.links.github },
-  { label: "YouTube", href: profile.links.youtube },
 ];
 ---
 
@@ -42,9 +41,14 @@ const contactLinks = [
     <p class="lede">
       M.S. student in artificial intelligence at San José State University.
     </p>
-    <p class="support">
-      Recent work looks at whether vision-language models hang on to a wrong scene, and at small apps I built because I wanted to use them.
-    </p>
+    <div class="support">
+      <p>
+        I got my Bachelor's degree in computer science from Cal Poly San Luis Obispo. Before grad school, I gained software engineering experience through internships at Intel and Solidigm, working on web applications and firmware-release tooling.
+      </p>
+      <p>
+        I'm interested in both building applications with AI and understanding how reliably the models behind them behave. My projects range from AI projects and LLM applications to small apps I build for my own use.
+      </p>
+    </div>
   </header>
 
   <section class="band" id="work">
@@ -105,10 +109,7 @@ const contactLinks = [
     <div class="about-grid">
       <div class="prose">
         <p>
-          I studied computer science at Cal Poly San Luis Obispo from 2019 to 2023. In Software Engineering I and II I led backend work on a four-person blogging platform, including the service and data layers, tests, and GitHub Actions.
-        </p>
-        <p>
-          The master's program at San José State runs through 2027. I also keep music on YouTube as <a href={profile.links.youtube} {...linkAttrs(profile.links.youtube)}>SrgManatee</a>.
+          I studied computer science at Cal Poly San Luis Obispo from 2019 to 2023. In Software Engineering I and II I led backend work on a four-person blogging platform, including the service and data layers, tests, and GitHub Actions. The master's program at San José State runs through 2027.
         </p>
       </div>
       <div class="facts">
@@ -133,7 +134,9 @@ const contactLinks = [
       <p class="index">04</p>
       <div>
         <h2>Elsewhere</h2>
-        <p class="section-note">Music playlists on YouTube, under SrgManatee.</p>
+        <p class="section-note">
+          Music playlists on YouTube, under <a href={profile.links.youtube} {...linkAttrs(profile.links.youtube)}>SrgManatee</a>.
+        </p>
       </div>
     </div>
     <ul class="playlist-shelf">
