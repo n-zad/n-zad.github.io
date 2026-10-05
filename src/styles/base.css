@@ -348,14 +348,14 @@ h1 {
   max-width: 36rem;
 }
 
-.featured-list li {
+.featured-list > li {
   display: grid;
   gap: 0.45rem 1.5rem;
   padding-block: 1.45rem;
   border-top: 1px solid var(--line);
 }
 
-.featured-list li:last-child {
+.featured-list > li:last-child {
   border-bottom: 1px solid var(--line);
 }
 
@@ -396,6 +396,16 @@ h1 {
 /* Flex items can shrink to the longest word, which wraps labels like "Read more". */
 .text-links li {
   flex: none;
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.text-links li + li::before {
+  content: "";
+  width: 1px;
+  height: 1.1em;
+  background: var(--line);
 }
 
 .text-links a {
@@ -407,14 +417,14 @@ h1 {
   white-space: nowrap;
 }
 
-.more-list li {
+.more-list > li {
   display: grid;
   gap: 0.7rem 2rem;
   padding-block: 1.15rem;
   border-top: 1px solid var(--line);
 }
 
-.more-list li:last-child {
+.more-list > li:last-child {
   border-bottom: 1px solid var(--line);
 }
 
@@ -450,7 +460,7 @@ h1 {
   gap: 1rem;
 }
 
-.playlist-shelf li {
+.playlist-shelf > li {
   padding: 1rem 0 0.2rem;
   border-top: 1px solid var(--line);
 }
@@ -525,11 +535,11 @@ h1 {
 }
 
 @media (min-width: 760px) {
-  .featured-list li {
+  .featured-list > li {
     grid-template-columns: 4.5rem 1fr;
   }
 
-  .more-list li {
+  .more-list > li {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
   }
