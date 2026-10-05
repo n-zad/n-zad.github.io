@@ -26,7 +26,7 @@ The dev server runs at `http://localhost:4321`.
 
 ## Status
 
-Early. The pages, project writeups, and visual design are still being built. This repository is the working copy of that site.
+The home page introduces me, a few selected projects, a shorter list of other work, music playlists, and contact links. Three projects have a longer writeup.
 
 ## Agent Skills
 

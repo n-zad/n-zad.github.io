@@ -1,0 +1,44 @@
+---
+import TextLinks from "../../components/TextLinks.astro";
+import { projects, type Project } from "../../data/site";
+import Base from "../../layouts/Base.astro";
+
+export function getStaticPaths() {
+  return projects
+    .filter((project) => project.writeup)
+    .map((project) => ({
+      params: { slug: project.slug },
+      props: { project },
+    }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const writeup = project.writeup ?? [];
+---
+
+<Base title={project.title} description={project.summary}>
+  <article class="writeup">
+    <p class="back">
+      <a href="/#work">Selected work</a>
+    </p>
+    <p class="meta">{project.context}</p>
+    <h1>{project.title}</h1>
+    <p class="lede">{project.summary}</p>
+    <p class="tags">{project.tags.join(" · ")}</p>
+    <TextLinks links={project.links} />
+    {
+      writeup.map((section) => (
+        <section>
+          <h2>{section.heading}</h2>
+          {section.paragraphs.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </section>
+      ))
+    }
+  </article>
+</Base>

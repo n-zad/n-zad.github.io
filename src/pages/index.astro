@@ -1,19 +1,160 @@
 ---
-import "../styles/base.css";
+import TextLinks from "../components/TextLinks.astro";
+import Base from "../layouts/Base.astro";
+import {
+  additionalProjects,
+  everythingPlaylist,
+  featuredProjects,
+  linkAttrs,
+  playlists,
+  profile,
+  projectLinks,
+  projectPath,
+} from "../data/site";
 
-const title = "Portfolio";
+const featured = featuredProjects();
+const additional = additionalProjects();
+const [givenName, familyName] = profile.name.split(" ");
+
+const contactLinks = [
+  { label: "Resume", href: profile.links.resume },
+  { label: "LinkedIn", href: profile.links.linkedin },
+  { label: "GitHub", href: profile.links.github },
+  { label: "YouTube", href: profile.links.youtube },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<h1>{title}</h1>
-	</body>
-</html>
+<Base title={profile.name}>
+  <section class="hero">
+    <p class="eyebrow">{profile.location}</p>
+    <h1>{givenName}<br />{familyName}</h1>
+    <p class="lede">
+      M.S. student in artificial intelligence at San José State University.
+    </p>
+    <p class="support">
+      Recent work looks at whether vision-language models hang on to a wrong scene, and at small apps I built because I wanted to use them.
+    </p>
+  </section>
+
+  <section class="band" id="work">
+    <div class="section-heading">
+      <p class="index">01</p>
+      <h2>Selected work</h2>
+    </div>
+    <ol class="featured-list">
+      {
+        featured.map((project, position) => (
+          <li>
+            <p class="project-index">{String(position + 1).padStart(2, "0")}</p>
+            <div class="project-copy">
+              <h3>
+                {project.writeup ? (
+                  <a href={projectPath(project)}>{project.title}</a>
+                ) : (
+                  project.title
+                )}
+              </h3>
+              <p class="meta">{project.context}</p>
+              <p>{project.summary}</p>
+              <p class="tags">{project.tags.join(" · ")}</p>
+              <TextLinks links={projectLinks(project)} />
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="band" id="more-work" aria-labelledby="more-work-heading">
+    <div class="section-heading">
+      <p class="index">02</p>
+      <h2 id="more-work-heading">More work</h2>
+    </div>
+    <ul class="more-list">
+      {
+        additional.map((project) => (
+          <li>
+            <div>
+              <h3>{project.title}</h3>
+              <p class="meta">{project.context}</p>
+              <p>{project.summary}</p>
+            </div>
+            <TextLinks links={project.links} />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="band" id="about">
+    <div class="section-heading">
+      <p class="index">03</p>
+      <h2>About</h2>
+    </div>
+    <div class="about-grid">
+      <div class="prose">
+        <p>
+          I studied computer science at Cal Poly San Luis Obispo from 2019 to 2023. In Software Engineering I and II I led backend work on a four-person blogging platform, including the service and data layers, tests, and GitHub Actions.
+        </p>
+        <p>
+          The master's program at San José State runs through 2027. I also keep music on YouTube as <a href={profile.links.youtube} {...linkAttrs(profile.links.youtube)}>SrgManatee</a>.
+        </p>
+      </div>
+      <div class="facts">
+        <article>
+          <h3>Education</h3>
+          <p>M.S. Artificial Intelligence, San José State University, 2025–2027</p>
+          <p>B.S. Computer Science, Cal Poly San Luis Obispo, 2019–2023</p>
+        </article>
+        <article>
+          <h3>Solidigm</h3>
+          <p class="meta">Product Development Engineering Intern · Jun 2022–Dec 2022 · Rancho Cordova</p>
+          <p>
+            I worked on Kitting Center, the internal web app in the SSD firmware release process. That included JavaScript features, Python automation for hardware-configuration exports, and updates to a C firmware simulator so it could test current firmware.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="elsewhere">
+    <div class="section-heading">
+      <p class="index">04</p>
+      <div>
+        <h2>Elsewhere</h2>
+        <p class="section-note">Music playlists on YouTube, under SrgManatee.</p>
+      </div>
+    </div>
+    <ul class="playlist-shelf">
+      {
+        playlists.map((playlist) => (
+          <li>
+            <h3>
+              <a href={playlist.href} {...linkAttrs(playlist.href)}>
+                {playlist.title}
+              </a>
+            </h3>
+            <p class="meta">{playlist.count}</p>
+            <p>{playlist.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="playlist-all">
+      <a href={everythingPlaylist.href} {...linkAttrs(everythingPlaylist.href)}>
+        {everythingPlaylist.label}
+      </a>
+    </p>
+  </section>
+
+  <section class="band" id="contact">
+    <div class="section-heading">
+      <p class="index">05</p>
+      <h2>Contact</h2>
+    </div>
+    <p class="contact-email">
+      <a href={`mailto:${profile.email}`}>{profile.email}</a>
+    </p>
+    <TextLinks links={contactLinks} />
+  </section>
+</Base>

@@ -1,0 +1,21 @@
+---
+import { linkAttrs, type LabeledLink } from "../data/site";
+
+interface Props {
+  links: LabeledLink[];
+}
+
+const { links } = Astro.props;
+---
+
+<ul class="text-links">
+  {
+    links.map((link) => (
+      <li>
+        <a href={link.href} {...linkAttrs(link.href)}>
+          {link.label}
+        </a>
+      </li>
+    ))
+  }
+</ul>

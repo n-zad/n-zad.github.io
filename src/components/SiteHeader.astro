@@ -1,0 +1,26 @@
+---
+import { linkAttrs, profile } from "../data/site";
+
+const nav = [
+  { href: "/#work", label: "Work" },
+  { href: "/#about", label: "About" },
+  { href: "/#elsewhere", label: "Elsewhere" },
+  { href: "/#contact", label: "Contact" },
+  { href: profile.links.resume, label: "Resume" },
+];
+---
+
+<header class="site-header">
+  <a class="wordmark" href="/">{profile.name}</a>
+  <nav aria-label="Sections">
+    <ul>
+      {
+        nav.map((item) => (
+          <li>
+            <a href={item.href} {...linkAttrs(item.href)}>{item.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
