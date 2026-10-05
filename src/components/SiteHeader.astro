@@ -1,12 +1,12 @@
 ---
 import { linkAttrs, profile } from "../data/site";
 
-const nav = [
+const nav: { href: string; label: string; file?: boolean }[] = [
   { href: "/#work", label: "Work" },
   { href: "/#about", label: "About" },
   { href: "/#elsewhere", label: "Elsewhere" },
   { href: "/#contact", label: "Contact" },
-  { href: profile.links.resume, label: "Resume" },
+  { href: profile.links.resume, label: "Resume", file: true },
 ];
 ---
 
@@ -17,7 +17,9 @@ const nav = [
       {
         nav.map((item) => (
           <li>
-            <a href={item.href} {...linkAttrs(item.href)}>{item.label}</a>
+            <a class:list={{ "nav-resume": item.file }} href={item.href} {...linkAttrs(item.href)}>
+              {item.file ? <span>{item.label}</span> : item.label}
+            </a>
           </li>
         ))
       }

@@ -25,16 +25,27 @@ const contactLinks = [
 ---
 
 <Base title={profile.name}>
-  <section class="hero">
-    <p class="eyebrow">{profile.location}</p>
-    <h1>{givenName}<br />{familyName}</h1>
+  <header class="hero" id="hero-banner">
+    <div class="hero-intro">
+      <div class="hero-copy">
+        <p class="eyebrow">{profile.location}</p>
+        <h1>{givenName}<br />{familyName}</h1>
+      </div>
+      <img
+        class="portrait"
+        src="/portrait.jpg"
+        alt="Nickzad Bayati"
+        width="714"
+        height="720"
+      />
+    </div>
     <p class="lede">
       M.S. student in artificial intelligence at San José State University.
     </p>
     <p class="support">
       Recent work looks at whether vision-language models hang on to a wrong scene, and at small apps I built because I wanted to use them.
     </p>
-  </section>
+  </header>
 
   <section class="band" id="work">
     <div class="section-heading">
@@ -65,7 +76,7 @@ const contactLinks = [
     </ol>
   </section>
 
-  <section class="band" id="more-work" aria-labelledby="more-work-heading">
+  <section class="band band--mist" id="more-work" aria-labelledby="more-work-heading">
     <div class="section-heading">
       <p class="index">02</p>
       <h2 id="more-work-heading">More work</h2>
@@ -117,7 +128,7 @@ const contactLinks = [
     </div>
   </section>
 
-  <section class="band" id="elsewhere">
+  <section class="band band--mist" id="elsewhere">
     <div class="section-heading">
       <p class="index">04</p>
       <div>
@@ -147,7 +158,7 @@ const contactLinks = [
     </p>
   </section>
 
-  <section class="band" id="contact">
+  <section class="band band--navy" id="contact">
     <div class="section-heading">
       <p class="index">05</p>
       <h2>Contact</h2>
@@ -158,3 +169,137 @@ const contactLinks = [
     <TextLinks links={contactLinks} />
   </section>
 </Base>
+
+<script>
+  type WaveEffect = {
+    destroy: () => void;
+  };
+
+  type VantaRuntime = {
+    WAVES: (options: {
+      el: HTMLElement;
+      mouseControls: boolean;
+      touchControls: boolean;
+      gyroControls: boolean;
+      minHeight: number;
+      minWidth: number;
+      scale: number;
+      scaleMobile: number;
+      color: number;
+      shininess: number;
+      waveHeight: number;
+      waveSpeed: number;
+      zoom: number;
+    }) => WaveEffect;
+  };
+
+  type VantaWindow = Window & {
+    THREE?: unknown;
+    VANTA?: VantaRuntime;
+  };
+
+  const banner = document.querySelector<HTMLElement>("#hero-banner");
+  const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let waves: WaveEffect | undefined;
+  let wavesStarting = false;
+
+  function waveColor(): number {
+    const brown = getComputedStyle(document.documentElement).getPropertyValue("--brown").trim();
+    const parsed = Number.parseInt(brown.slice(1), 16);
+    if (!brown.startsWith("#") || Number.isNaN(parsed)) {
+      throw new Error(`Expected --brown to be a hex color, got ${brown}`);
+    }
+    return parsed;
+  }
+
+  function loadScript(src: string): Promise<void> {
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+    if (existing?.dataset.loaded === "true") {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+      const script = existing ?? document.createElement("script");
+      const finish = () => {
+        script.dataset.loaded = "true";
+        resolve();
+      };
+      const fail = () => {
+        script.remove();
+        reject(new Error(`Failed to load ${src}`));
+      };
+      script.addEventListener("load", finish, { once: true });
+      script.addEventListener("error", fail, { once: true });
+      if (!existing) {
+        script.src = src;
+        document.head.appendChild(script);
+      }
+    });
+  }
+
+  async function ensureVanta(): Promise<VantaRuntime> {
+    const runtime = window as VantaWindow;
+    if (!runtime.THREE) {
+      await loadScript("/three.r134.min.js");
+    }
+    if (!runtime.VANTA) {
+      await loadScript("/vanta.waves.min.js");
+    }
+    if (!runtime.VANTA) {
+      throw new Error("Vanta did not register on window");
+    }
+    return runtime.VANTA;
+  }
+
+  function stopWaves() {
+    waves?.destroy();
+    waves = undefined;
+  }
+
+  async function startWaves() {
+    if (!banner || motionQuery.matches || waves || wavesStarting || banner.querySelector(".vanta-canvas")) {
+      return;
+    }
+
+    wavesStarting = true;
+    try {
+      const vanta = await ensureVanta();
+      if (motionQuery.matches || waves || banner.querySelector(".vanta-canvas")) {
+        return;
+      }
+      banner.classList.remove("hero--fallback");
+      waves = vanta.WAVES({
+        el: banner,
+        mouseControls: false,
+        touchControls: false,
+        gyroControls: false,
+        minHeight: 200,
+        minWidth: 200,
+        scale: 1,
+        scaleMobile: 1,
+        color: waveColor(),
+        shininess: 10,
+        waveHeight: 8,
+        waveSpeed: 2,
+        zoom: 0.82,
+      });
+    } catch (error) {
+      banner.classList.add("hero--fallback");
+      console.error(error);
+    } finally {
+      wavesStarting = false;
+    }
+  }
+
+  motionQuery.addEventListener("change", () => {
+    if (motionQuery.matches) {
+      stopWaves();
+      return;
+    }
+    void startWaves();
+  });
+
+  if (!motionQuery.matches) {
+    void startWaves();
+  }
+</script>
