@@ -1,0 +1,60 @@
+---
+import { linkAttrs, profile } from "../data/site";
+import Icon, { type IconName } from "./Icon.astro";
+
+const iconLinks: { icon: IconName; label: string; href: string }[] = [
+  { icon: "email", label: `Email ${profile.email}`, href: `mailto:${profile.email}` },
+  { icon: "phone", label: `Call ${profile.phone.display}`, href: profile.phone.href },
+  { icon: "linkedin", label: "LinkedIn", href: profile.links.linkedin },
+  { icon: "github", label: "GitHub", href: profile.links.github },
+  { icon: "youtube", label: "YouTube", href: profile.links.youtube },
+];
+const discordLabel = `Copy Discord username ${profile.discord.username}`;
+---
+
+<div class="contact-icons">
+  <ul>
+    {
+      iconLinks.map((link) => (
+        <li>
+          <a href={link.href} aria-label={link.label} title={link.label} {...linkAttrs(link.href)}>
+            <Icon name={link.icon} />
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a href="#contact" aria-label={discordLabel} title={discordLabel} data-discord-username={profile.discord.username}>
+        <Icon name="discord" />
+      </a>
+    </li>
+  </ul>
+  <p class="copy-status" role="status"></p>
+</div>
+
+<script>
+  const COPY_STATUS_MS = 2500;
+
+  for (const trigger of document.querySelectorAll<HTMLAnchorElement>("[data-discord-username]")) {
+    const status = trigger.closest(".contact-icons")?.querySelector<HTMLElement>(".copy-status");
+    const username = trigger.dataset.discordUsername;
+    if (!status || !username) {
+      continue;
+    }
+
+    let clearStatus: number | undefined;
+    trigger.addEventListener("click", async (event) => {
+      event.preventDefault();
+      try {
+        await navigator.clipboard.writeText(username);
+        status.textContent = `Copied Discord username: ${username}`;
+      } catch {
+        status.textContent = `Discord: ${username}`;
+      }
+      window.clearTimeout(clearStatus);
+      clearStatus = window.setTimeout(() => {
+        status.textContent = "";
+      }, COPY_STATUS_MS);
+    });
+  }
+</script>

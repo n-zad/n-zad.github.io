@@ -1,10 +1,13 @@
 ---
+import ContactIcons from "../components/ContactIcons.astro";
 import TextLinks from "../components/TextLinks.astro";
 import Base from "../layouts/Base.astro";
 import {
   additionalProjects,
   everythingPlaylist,
   featuredProjects,
+  games,
+  internships,
   linkAttrs,
   playlists,
   profile,
@@ -15,9 +18,9 @@ import {
 const featured = featuredProjects();
 const additional = additionalProjects();
 const [givenName, familyName] = profile.name.split(" ");
+const videoGames = new Intl.ListFormat("en", { type: "conjunction" }).format(games.video);
 
 const contactLinks = [
-  { label: "Resume", href: profile.links.resume },
   { label: "LinkedIn", href: profile.links.linkedin },
   { label: "GitHub", href: profile.links.github },
 ];
@@ -30,21 +33,21 @@ const contactLinks = [
         <p class="eyebrow">{profile.location}</p>
         <h1>{givenName}<br />{familyName}</h1>
       </div>
-      <img
-        class="portrait"
-        src="/portrait.jpg"
-        alt="Nickzad Bayati"
-        width="714"
-        height="720"
-      />
+      <div class="hero-portrait">
+        <img
+          class="portrait"
+          src="/portrait.jpg"
+          alt="Nickzad Bayati"
+          width="714"
+          height="720"
+        />
+        <ContactIcons />
+      </div>
     </div>
     <p class="lede">
       M.S. student in artificial intelligence at San José State University.
     </p>
     <div class="support">
-      <p>
-        I got my Bachelor's degree in computer science from Cal Poly San Luis Obispo. Before grad school, I gained software engineering experience through internships at Intel and Solidigm, working on web applications and firmware-release tooling.
-      </p>
       <p>
         I'm interested in both building applications with AI and understanding how reliably the models behind them behave. My projects range from AI projects and LLM applications to small apps I build for my own use.
       </p>
@@ -109,8 +112,15 @@ const contactLinks = [
     <div class="about-grid">
       <div class="prose">
         <p>
-          I studied computer science at Cal Poly San Luis Obispo from 2019 to 2023. In Software Engineering I and II I led backend work on a four-person blogging platform, including the service and data layers, tests, and GitHub Actions. The master's program at San José State runs through 2027.
+          I'm an AI graduate student at San José State University interested in building software and exploring how AI models behave.
         </p>
+        <p>
+          I earned my bachelor's degree in computer science from Cal Poly San Luis Obispo. Before grad school, I gained software engineering experience through internships at Intel and Solidigm, working on web applications and firmware-release tooling.
+        </p>
+        <p>
+          In my free time, I enjoy gaming, watching YouTube, browsing Reddit, and listening to music. I'm also a fan of action and comedy shows and movies, and I like vibe coding small tools for my own use.
+        </p>
+        <TextLinks links={[{ label: "Resume (PDF)", href: profile.links.resume }]} />
       </div>
       <div class="facts">
         <article>
@@ -119,46 +129,67 @@ const contactLinks = [
           <p>B.S. Computer Science, Cal Poly San Luis Obispo, 2019–2023</p>
         </article>
         <article>
-          <h3>Solidigm</h3>
-          <p class="meta">Product Development Engineering Intern · Jun 2022–Dec 2022 · Rancho Cordova</p>
-          <p>
-            I worked on Kitting Center, the internal web app in the SSD firmware release process. That included JavaScript features, Python automation for hardware-configuration exports, and updates to a C firmware simulator so it could test current firmware.
-          </p>
+          <h3>Internships</h3>
+          <ul class="internships">
+            {
+              internships.map((internship) => (
+                <li>
+                  <h4>{internship.company}</h4>
+                  <p class="meta">{internship.role} · {internship.period} · {internship.location}</p>
+                  <p>{internship.summary}</p>
+                </li>
+              ))
+            }
+          </ul>
         </article>
       </div>
     </div>
   </section>
 
-  <section class="band band--mist" id="elsewhere">
+  <section class="band band--mist" id="interests">
     <div class="section-heading">
       <p class="index">04</p>
-      <div>
-        <h2>Elsewhere</h2>
-        <p class="section-note">
-          Music playlists on YouTube, under <a href={profile.links.youtube} {...linkAttrs(profile.links.youtube)}>SrgManatee</a>.
-        </p>
+      <h2>Interests</h2>
+    </div>
+    <div class="interest-group">
+      <h3>Games</h3>
+      <div class="games">
+        <article>
+          <h4>Video games</h4>
+          <p>Lately I've been playing {videoGames}.</p>
+        </article>
+        <article>
+          <h4>Tabletop</h4>
+          <p>{games.tabletop}</p>
+        </article>
       </div>
     </div>
-    <ul class="playlist-shelf">
-      {
-        playlists.map((playlist) => (
-          <li>
-            <h3>
-              <a href={playlist.href} {...linkAttrs(playlist.href)}>
-                {playlist.title}
-              </a>
-            </h3>
-            <p class="meta">{playlist.count}</p>
-            <p>{playlist.description}</p>
-          </li>
-        ))
-      }
-    </ul>
-    <p class="playlist-all">
-      <a href={everythingPlaylist.href} {...linkAttrs(everythingPlaylist.href)}>
-        {everythingPlaylist.label}
-      </a>
-    </p>
+    <div class="interest-group">
+      <h3>Music</h3>
+      <p class="section-note">
+        Playlists on YouTube, under <a href={profile.links.youtube} {...linkAttrs(profile.links.youtube)}>SrgManatee</a>.
+      </p>
+      <ul class="playlist-shelf">
+        {
+          playlists.map((playlist) => (
+            <li>
+              <h4>
+                <a href={playlist.href} {...linkAttrs(playlist.href)}>
+                  {playlist.title}
+                </a>
+              </h4>
+              <p class="meta">{playlist.count}</p>
+              <p>{playlist.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="playlist-all">
+        <a href={everythingPlaylist.href} {...linkAttrs(everythingPlaylist.href)}>
+          {everythingPlaylist.label}
+        </a>
+      </p>
+    </div>
   </section>
 
   <section class="band band--navy" id="contact">
@@ -166,8 +197,12 @@ const contactLinks = [
       <p class="index">05</p>
       <h2>Contact</h2>
     </div>
-    <p class="contact-email">
-      <a href={`mailto:${profile.email}`}>{profile.email}</a>
+    <ul class="contact-primary">
+      <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
+      <li><a href={profile.phone.href}>{profile.phone.display}</a></li>
+    </ul>
+    <p class="contact-discord">
+      Discord: <strong>{profile.discord.username}</strong> (display name {profile.discord.displayName})
     </p>
     <TextLinks links={contactLinks} />
   </section>

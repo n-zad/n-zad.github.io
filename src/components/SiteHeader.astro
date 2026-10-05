@@ -4,14 +4,15 @@ import { linkAttrs, profile } from "../data/site";
 const nav: { href: string; label: string; file?: boolean }[] = [
   { href: "/#work", label: "Work" },
   { href: "/#about", label: "About" },
-  { href: "/#elsewhere", label: "Elsewhere" },
+  { href: "/#interests", label: "Interests" },
   { href: "/#contact", label: "Contact" },
   { href: profile.links.resume, label: "Resume", file: true },
 ];
+const isHome = Astro.url.pathname === "/";
 ---
 
 <header class="site-header">
-  <a class="wordmark" href="/">{profile.name}</a>
+  <a class="wordmark" href={isHome ? "#top" : "/"}>{profile.name}</a>
   <nav aria-label="Sections">
     <ul>
       {

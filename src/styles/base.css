@@ -206,10 +206,81 @@ main {
   border-radius: 50%;
 }
 
+.hero-portrait {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.contact-icons {
+  position: relative;
+}
+
+.contact-icons ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--on-dark);
+  transition: background-color 150ms ease;
+}
+
+.contact-icons a:hover {
+  color: var(--on-dark);
+  background: color-mix(in srgb, var(--on-dark) 18%, transparent);
+}
+
+.copy-status {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.copy-status:empty {
+  display: none;
+}
+
 @media (max-width: 640px) {
   .hero-intro {
     flex-direction: column-reverse;
     align-items: flex-start;
+  }
+
+  .hero-portrait {
+    align-items: flex-start;
+  }
+
+  .contact-icons ul {
+    justify-content: flex-start;
+    margin-inline-start: -0.65rem;
+  }
+
+  .copy-status {
+    left: 0;
+    transform: none;
   }
 
   .portrait {
@@ -327,7 +398,7 @@ h1 {
 .writeup h1,
 .project-copy h3,
 .more-list h3,
-.playlist-shelf h3,
+.playlist-shelf h4,
 .facts h3 {
   margin: 0;
   font-weight: 560;
@@ -451,8 +522,54 @@ h1 {
   gap: 1.25rem;
 }
 
-.facts h3 {
+.facts h3,
+.interest-group h3 {
+  margin: 0;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.internships {
+  display: grid;
+  gap: 1rem;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.facts h4,
+.games h4 {
+  margin: 0;
   font-size: 1rem;
+  font-weight: 560;
+  letter-spacing: -0.02em;
+}
+
+.facts .internships p:first-of-type {
+  margin-top: 0.25rem;
+}
+
+.interest-group + .interest-group {
+  margin-top: 2rem;
+}
+
+.games {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.games p {
+  margin: 0.35rem 0 0;
+  max-width: 34rem;
+}
+
+.interest-group .playlist-shelf {
+  margin-top: 1rem;
 }
 
 .playlist-shelf {
@@ -465,15 +582,15 @@ h1 {
   border-top: 1px solid var(--line);
 }
 
-.playlist-shelf h3 {
+.playlist-shelf h4 {
   font-size: clamp(1.6rem, 3vw, 2.2rem);
 }
 
-.playlist-shelf h3 a {
+.playlist-shelf h4 a {
   text-decoration: none;
 }
 
-.playlist-shelf h3 a:hover {
+.playlist-shelf h4 a:hover {
   text-decoration: underline;
 }
 
@@ -481,17 +598,30 @@ h1 {
   margin: 1rem 0 0;
 }
 
-.contact-email {
+.contact-primary {
+  display: grid;
+  gap: 0.5rem;
   margin: 0;
+  padding: 0;
+  list-style: none;
   font-size: clamp(1.45rem, 3vw, 2.3rem);
   font-weight: 560;
   letter-spacing: -0.04em;
   line-height: 1.15;
 }
 
-.contact-email a {
+.contact-primary a {
   overflow-wrap: anywhere;
   text-decoration-thickness: 1px;
+}
+
+.contact-discord {
+  margin: 1rem 0 0;
+}
+
+.contact-discord strong {
+  font-family: var(--font-mono);
+  font-weight: 500;
 }
 
 .site-footer {
@@ -557,6 +687,11 @@ h1 {
 
   .playlist-shelf {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .games {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
   }
 }
